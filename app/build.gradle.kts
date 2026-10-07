@@ -37,7 +37,7 @@ android {
 
 dependencies {
     implementation(project(":shared"))
-
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
