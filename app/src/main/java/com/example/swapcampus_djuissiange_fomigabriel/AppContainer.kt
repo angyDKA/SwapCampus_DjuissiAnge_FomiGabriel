@@ -6,6 +6,8 @@ import com.isep.shared.domain.entities.UserAccount
 import com.isep.shared.repository.InMemoryListingRepository
 import com.isep.shared.repository.ListingRepository
 import kotlinx.datetime.LocalDate
+import com.isep.shared.repository.AuthRepository
+import com.isep.shared.repository.InMemoryAuthRepository
 
 /**
  * Single place where the app creates its repositories.
@@ -16,12 +18,9 @@ object AppContainer {
 
     val listingRepository: ListingRepository =
         InMemoryListingRepository().also { seedDemoListings(it) }
+    val authRepository: AuthRepository = InMemoryAuthRepository()
 }
 
-/**
- * TEMPORARY demo data so the list is not empty at startup.
- * To be replaced by the mock accounts of AuthRepository (exercise 2).
- */
 private fun seedDemoListings(repository: ListingRepository) {
     val alice = UserAccount(
         id = 1,

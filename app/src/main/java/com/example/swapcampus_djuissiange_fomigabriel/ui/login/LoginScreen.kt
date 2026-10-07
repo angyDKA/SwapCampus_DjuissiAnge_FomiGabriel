@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.isep.shared.repository.AppContainer
+import com.example.swapcampus_djuissiange_fomigabriel.AppContainer
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit = {}) {

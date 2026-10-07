@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.swapcampus_djuissiange_fomigabriel.ui.listings.ListingsScreen
+import com.example.swapcampus_djuissiange_fomigabriel.ui.login.LoginScreen
 
 /**
  * Entry point of the Android app.
