@@ -39,4 +39,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     implementation(project(":shared"))
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
 }
