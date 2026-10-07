@@ -9,6 +9,9 @@ import com.isep.shared.domain.entities.UserAccount
 /**
  * In-memory implementation: every operation is delegated
  * to a ListingCatalog instance (the TD2 domain).
+ *
+ * The business rules (non-empty title, price > 0) are checked here,
+ * in :shared, so they can be unit-tested without going through the UI.
  */
 class InMemoryListingRepository(
     private val catalog: ListingCatalog = ListingCatalog()
@@ -28,7 +31,11 @@ class InMemoryListingRepository(
         category: Category,
         author: UserAccount,
         photoUrl: String?
-    ): Listing = catalog.postListing(title, description, price, category, author, photoUrl)
+    ): Listing {
+        require(title.isNotBlank()) { TITLE_RULE }
+        require(price > 0) { PRICE_RULE }
+        return catalog.postListing(title.trim(), description.trim(), price, category, author, photoUrl)
+    }
 
     override fun updateListing(
         id: Int,
@@ -37,10 +44,19 @@ class InMemoryListingRepository(
         price: Double?,
         category: Category?,
         photoUrl: String?
-    ): Listing? = catalog.updateListing(id, title, description, price, category, photoUrl)
+    ): Listing? {
+        title?.let { require(it.isNotBlank()) { TITLE_RULE } }
+        price?.let { require(it > 0) { PRICE_RULE } }
+        return catalog.updateListing(id, title?.trim(), description?.trim(), price, category, photoUrl)
+    }
 
     override fun changeStatus(id: Int, newStatus: ListingStatus): Listing? =
         catalog.changeStatus(id, newStatus)
 
     override fun removeListing(id: Int): Boolean = catalog.removeListing(id)
+
+    private companion object {
+        const val TITLE_RULE = "The title must not be empty."
+        const val PRICE_RULE = "The price must be greater than 0."
+    }
 }
