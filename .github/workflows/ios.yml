@@ -1,0 +1,72 @@
+# Vérifie que l'app iOS compile et la lance sur un simulateur iPhone (sans avoir de Mac).
+# À placer dans le projet : .github/workflows/ios.yml
+
+name: iOS - build et capture
+
+on:
+  push:
+  workflow_dispatch: # permet de lancer à la main depuis l'onglet "Actions"
+
+jobs:
+  ios:
+    runs-on: macos-latest # un Mac fourni par GitHub
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Préparer Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Rendre gradlew exécutable (utile si le projet vient de Windows)
+        run: chmod +x gradlew
+
+      - name: Choisir un simulateur iPhone
+        run: |
+          UDID=$(xcrun simctl list devices available | grep -m1 "iPhone" | grep -oE '[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}')
+          echo "Simulateur choisi : $UDID"
+          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+
+      - name: Compiler l'app iOS
+        run: |
+          xcodebuild build \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -destination "id=$SIM_UDID" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Lancer l'app sur le simulateur et prendre une capture
+        run: |
+          xcrun simctl boot "$SIM_UDID"
+          xcrun simctl bootstatus "$SIM_UDID" -b
+          APP=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name "*.app" | head -1)
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "$APP/Info.plist")
+          echo "App : $APP ($BUNDLE_ID)"
+          xcrun simctl install "$SIM_UDID" "$APP"
+          xcrun simctl launch "$SIM_UDID" "$BUNDLE_ID"
+          sleep 15
+          xcrun simctl io "$SIM_UDID" screenshot capture-ios.png
+
+      - name: Compresser l'app pour Appetize.io
+        run: |
+          APP=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name "*.app" | head -1)
+          ditto -c -k --keepParent "$APP" app-ios-simulateur.zip
+
+      - name: Mettre la capture à disposition
+        uses: actions/upload-artifact@v4
+        with:
+          name: capture-ios
+          path: capture-ios.png
+
+      - name: Mettre l'app à disposition (à déposer sur appetize.io)
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-ios-simulateur
+          path: app-ios-simulateur.zip
