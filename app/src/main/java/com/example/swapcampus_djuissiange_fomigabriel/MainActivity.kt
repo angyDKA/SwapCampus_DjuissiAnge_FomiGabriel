@@ -3,7 +3,7 @@ package com.example.swapcampus_djuissiange_fomigabriel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
+import com.isep.composeapp.ui.theme.SwapCampusTheme
 
 /**
  * Entry point of the Android app.
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            SwapCampusTheme {
                 SwapCampusApp()
             }
         }
