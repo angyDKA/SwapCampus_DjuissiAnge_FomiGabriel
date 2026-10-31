@@ -5,7 +5,7 @@ import com.isep.shared.domain.entities.Category
 import com.isep.shared.domain.entities.Listing
 import com.isep.shared.domain.entities.ListingStatus
 import com.isep.shared.domain.entities.UserAccount
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
