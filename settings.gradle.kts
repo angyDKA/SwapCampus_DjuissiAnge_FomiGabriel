@@ -25,4 +25,5 @@ dependencyResolutionManagement {
 rootProject.name = "SwapCampus_DjuissiAnge_FomiGabriel"
 include(":app")
 include(":shared")
+include(":composeApp")
  
