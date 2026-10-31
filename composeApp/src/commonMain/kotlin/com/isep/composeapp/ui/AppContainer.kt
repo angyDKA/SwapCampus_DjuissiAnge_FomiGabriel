@@ -1,4 +1,4 @@
-package com.example.swapcampus_djuissiange_fomigabriel
+package com.isep.composeapp.ui
 
 import com.isep.shared.domain.UserRole
 import com.isep.shared.domain.entities.Category

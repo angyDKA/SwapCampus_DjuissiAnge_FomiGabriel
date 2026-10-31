@@ -1,4 +1,4 @@
-package com.example.swapcampus_djuissiange_fomigabriel.ui.login
+package com.isep.composeapp.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import com.isep.shared.domain.entities.UserAccount
 import com.isep.shared.repository.AuthRepository

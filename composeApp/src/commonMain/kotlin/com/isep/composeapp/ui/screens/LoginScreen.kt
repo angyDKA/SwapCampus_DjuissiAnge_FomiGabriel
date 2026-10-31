@@ -1,4 +1,4 @@
-package com.example.swapcampus_djuissiange_fomigabriel.ui.login
+package com.isep.composeapp.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -7,7 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.swapcampus_djuissiange_fomigabriel.AppContainer
+import com.isep.composeapp.ui.AppContainer
+import com.isep.composeapp.ui.viewmodel.LoginViewModel
 
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit = {}) {
