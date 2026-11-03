@@ -1,30 +1,52 @@
-# Vérifie que l'app iOS compile et la lance sur un simulateur iPhone (sans avoir de Mac).
-# À placer dans le projet : .github/workflows/ios.yml
+# Étape 10 du tuto, sans Mac : un Mac de GitHub compile la partie iOS de SwapCampus.
+#  - job "simulateur" : compile, lance l'app sur un iPhone simulé et prend 3 captures
+#    (anglais, français, mode sombre) + produit le .zip pour appetize.io
+#  - job "iphone"     : produit le fichier .ipa à installer sur un vrai iPhone avec Sideloadly
 
 name: iOS - build et capture
 
 on:
   push:
+    branches: [td2-cmp]
   workflow_dispatch: # permet de lancer à la main depuis l'onglet "Actions"
 
+env:
+  # Kotlin 2.4.21 est validé avec Xcode 26.4 (cf. tuto, Prerequisites)
+  XCODE_WANTED: "26.4"
+
 jobs:
-  ios:
-    runs-on: macos-latest # un Mac fourni par GitHub
+  simulateur:
+    runs-on: macos-26 # un Mac Apple Silicon fourni par GitHub
     steps:
       - name: Récupérer le code
         uses: actions/checkout@v4
 
-      - name: Installer Java 17
+      - name: Choisir Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          XC=$(ls -d /Applications/Xcode_${XCODE_WANTED}*.app 2>/dev/null | sort -V | tail -1)
+          [ -z "$XC" ] && XC=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          echo "Xcode choisi : $XC"
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+
+      - name: Installer Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
-      - name: Préparer Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Préparer Gradle (mémoire, cf. tuto étape 1.3)
+        run: |
+          mkdir -p ~/.gradle
+          echo "org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
+          echo "kotlin.daemon.jvmargs=-Xmx3g" >> ~/.gradle/gradle.properties
+          chmod +x gradlew
 
-      - name: Rendre gradlew exécutable (utile si le projet vient de Windows)
-        run: chmod +x gradlew
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Étape 9 - framework Kotlin pour le simulateur
+        run: ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
 
       - name: Choisir un simulateur iPhone
         run: |
@@ -32,7 +54,7 @@ jobs:
           echo "Simulateur choisi : $UDID"
           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
 
-      - name: Compiler l'app iOS
+      - name: Étape 10 - compiler l'app iOS (Xcode)
         run: |
           xcodebuild build \
             -project iosApp/iosApp.xcodeproj \
@@ -42,31 +64,89 @@ jobs:
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Lancer l'app sur le simulateur et prendre une capture
+      - name: Étape 11 - lancer l'app et prendre des captures
         run: |
-          xcrun simctl boot "$SIM_UDID"
-          xcrun simctl bootstatus "$SIM_UDID" -b
           APP=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name "*.app" | head -1)
           BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print CFBundleIdentifier" "$APP/Info.plist")
-          echo "App : $APP ($BUNDLE_ID)"
+          echo "APP=$APP" >> "$GITHUB_ENV"
+          xcrun simctl boot "$SIM_UDID"
+          xcrun simctl bootstatus "$SIM_UDID" -b
           xcrun simctl install "$SIM_UDID" "$APP"
-          xcrun simctl launch "$SIM_UDID" "$BUNDLE_ID"
-          sleep 15
-          xcrun simctl io "$SIM_UDID" screenshot capture-ios.png
+          mkdir -p captures
+          # 1) anglais, mode clair
+          xcrun simctl ui "$SIM_UDID" appearance light
+          xcrun simctl launch "$SIM_UDID" "$BUNDLE_ID"; sleep 15
+          xcrun simctl io "$SIM_UDID" screenshot captures/1-anglais.png
+          # 2) mode sombre
+          xcrun simctl ui "$SIM_UDID" appearance dark; sleep 5
+          xcrun simctl io "$SIM_UDID" screenshot captures/2-sombre.png
+          # 3) français (l'app est relancée avec la langue française)
+          xcrun simctl ui "$SIM_UDID" appearance light
+          xcrun simctl terminate "$SIM_UDID" "$BUNDLE_ID" || true
+          xcrun simctl launch "$SIM_UDID" "$BUNDLE_ID" -AppleLanguages "(fr)" -AppleLocale fr_FR; sleep 15
+          xcrun simctl io "$SIM_UDID" screenshot captures/3-francais.png
 
-      - name: Compresser l'app pour Appetize.io
-        run: |
-          APP=$(find build/Build/Products/Debug-iphonesimulator -maxdepth 1 -name "*.app" | head -1)
-          ditto -c -k --keepParent "$APP" app-ios-simulateur.zip
+      - name: Compresser l'app pour appetize.io
+        run: ditto -c -k --keepParent "$APP" app-ios-simulateur.zip
 
-      - name: Mettre la capture à disposition
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: capture-ios
-          path: capture-ios.png
+          name: captures-ios
+          path: captures/
 
-      - name: Mettre l'app à disposition (à déposer sur appetize.io)
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: app-ios-simulateur
           path: app-ios-simulateur.zip
+
+  iphone:
+    runs-on: macos-26
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Choisir Xcode
+        run: |
+          XC=$(ls -d /Applications/Xcode_${XCODE_WANTED}*.app 2>/dev/null | sort -V | tail -1)
+          [ -z "$XC" ] && XC=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+
+      - name: Installer Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Préparer Gradle
+        run: |
+          mkdir -p ~/.gradle
+          echo "org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8" >> ~/.gradle/gradle.properties
+          echo "kotlin.daemon.jvmargs=-Xmx3g" >> ~/.gradle/gradle.properties
+          chmod +x gradlew
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Compiler l'app pour un vrai iPhone (sans signature)
+        run: |
+          xcodebuild build \
+            -project iosApp/iosApp.xcodeproj \
+            -scheme iosApp \
+            -configuration Debug \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath build-device \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Emballer en .ipa
+        run: |
+          APP=$(find build-device/Build/Products/Debug-iphoneos -maxdepth 1 -name "*.app" | head -1)
+          mkdir -p Payload && cp -R "$APP" Payload/
+          zip -qry SwapCampus.ipa Payload
+          ls -lh SwapCampus.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swapcampus-iphone-ipa
+          path: SwapCampus.ipa
