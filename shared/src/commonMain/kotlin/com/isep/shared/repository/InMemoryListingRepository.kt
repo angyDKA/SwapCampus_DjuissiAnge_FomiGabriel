@@ -28,7 +28,11 @@ class InMemoryListingRepository(
         category: Category,
         author: UserAccount,
         photoUrl: String?
-    ): Listing = catalog.postListing(title, description, price, category, author, photoUrl)
+    ): Listing {
+        require(title.isNotBlank()){"Le titre ne peux pas être vide, veuillez entrer un nouveau titre"}
+        require(price>0){ "Le prix doit être superieur a zero"}
+        return catalog.postListing(title, description, price, category, author, photoUrl)
+    }
 
     override fun updateListing(
         id: Int,
@@ -37,7 +41,11 @@ class InMemoryListingRepository(
         price: Double?,
         category: Category?,
         photoUrl: String?
-    ): Listing? = catalog.updateListing(id, title, description, price, category, photoUrl)
+    ): Listing? {
+        require(title == null || title.isNotBlank()){"Le titre ne peux pas être vide, veuillez entrer un nouveau titre"}
+        require(price == null || price>0){ "Le prix doit être superieur a zero"}
+        return catalog.updateListing(id, title, description, price,category, photoUrl)
+    }
 
     override fun changeStatus(id: Int, newStatus: ListingStatus): Listing? =
         catalog.changeStatus(id, newStatus)

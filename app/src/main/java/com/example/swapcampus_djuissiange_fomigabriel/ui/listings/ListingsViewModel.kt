@@ -11,10 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/**
- * Holds the state of the Listings screen.
- * It depends only on the ListingRepository interface, never on ListingCatalog.
- */
 class ListingsViewModel(
     private val repository: ListingRepository = AppContainer.listingRepository
 ) : ViewModel() {

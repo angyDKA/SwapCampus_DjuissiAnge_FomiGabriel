@@ -20,7 +20,7 @@ class InMemoryAuthRepository: AuthRepository{
         ),
         UserAccount(
             id = 2,
-            name = "Bob Dupont",
+            name = "Bob Durand",
             email = "bob@isep.fr",
             passwordHash = "bob123",
             role = UserRole.STUDENT,
