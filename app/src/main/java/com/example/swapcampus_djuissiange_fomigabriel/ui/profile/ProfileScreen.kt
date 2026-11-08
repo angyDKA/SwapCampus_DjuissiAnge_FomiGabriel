@@ -9,7 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.swapcampus_djuissiange_fomigabriel.AppContainer
+import com.isep.composeapp.ui.AppContainer
 
 @Composable
 fun ProfileScreen(onLoginClick: () -> Unit) {

@@ -17,9 +17,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.swapcampus_djuissiange_fomigabriel.AppContainer
+import com.isep.composeapp.ui.AppContainer
 import com.example.swapcampus_djuissiange_fomigabriel.ui.listings.ListingsScreen
-import com.example.swapcampus_djuissiange_fomigabriel.ui.login.LoginScreen
+import com.isep.composeapp.ui.screens.LoginScreen
 import com.example.swapcampus_djuissiange_fomigabriel.ui.mylistings.MyListingsScreen
 import com.example.swapcampus_djuissiange_fomigabriel.ui.post.PostListingScreen
 import com.example.swapcampus_djuissiange_fomigabriel.ui.profile.ProfileScreen

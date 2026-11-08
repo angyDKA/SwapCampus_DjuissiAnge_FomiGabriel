@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.swapcampus_djuissiange_fomigabriel.AppContainer
+import com.isep.composeapp.ui.AppContainer
 import com.isep.shared.domain.entities.Listing
 import com.isep.shared.domain.entities.label
 

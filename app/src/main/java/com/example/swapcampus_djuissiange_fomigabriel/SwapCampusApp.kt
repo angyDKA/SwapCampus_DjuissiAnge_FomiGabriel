@@ -25,7 +25,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.swapcampus_djuissiange_fomigabriel.ui.listings.ListingsScreen
 import com.example.swapcampus_djuissiange_fomigabriel.ui.listings.ListingsViewModel
-import com.example.swapcampus_djuissiange_fomigabriel.ui.login.LoginScreen
+import com.isep.composeapp.ui.AppContainer
+import com.isep.composeapp.ui.screens.LoginScreen
 import com.isep.shared.domain.entities.UserAccount
 
 /** One entry of the bottom navigation bar. */

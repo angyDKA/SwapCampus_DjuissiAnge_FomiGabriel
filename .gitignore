@@ -13,3 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+.kotlin/
+
+# Xcode (tuto étape 12)
+**/xcuserdata
+iosApp/iosApp.xcodeproj/xcuserdata/
+build/

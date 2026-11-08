@@ -63,7 +63,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 // Add KMP dependencies here
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+                api(libs.kotlinx.datetime)
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
             }
         }

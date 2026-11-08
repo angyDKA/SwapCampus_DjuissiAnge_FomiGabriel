@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login -->
+    <string name="login_title">Log in</string>
+    <string name="login_email">Email</string>
+    <string name="login_password">Password</string>
+    <string name="action_login">Log in</string>
+    <string name="login_demo_accounts">Demo accounts:\nalice@isep.fr / alice123\nbob@isep.fr / bob123\nadmin@isep.fr / admin123</string>
+    <string name="login_error_empty_fields">Enter your email and your password.</string>
+    <string name="login_error_invalid_credentials">Wrong email or password.</string>
+    <string name="login_logged_in_as">Logged in: %1$s</string>
+
+    <!-- Welcome screen (new, shared by Android and iOS) -->
+    <string name="welcome_title">Welcome, %1$s!</string>
+    <string name="welcome_platform">Running on %1$s</string>
+    <string name="welcome_logout">Log out</string>
+</resources>

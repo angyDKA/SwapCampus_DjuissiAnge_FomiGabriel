@@ -2,7 +2,7 @@ package com.example.swapcampus_djuissiange_fomigabriel.ui.listings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.swapcampus_djuissiange_fomigabriel.AppContainer
+import com.isep.composeapp.ui.AppContainer
 import com.isep.shared.domain.entities.Category
 import com.isep.shared.repository.ListingRepository
 import kotlinx.coroutines.delay
