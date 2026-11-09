@@ -37,7 +37,7 @@ import com.isep.composeapp.ui.viewmodel.ListingsViewModel
 import com.isep.shared.domain.describePhoto
 import com.isep.shared.domain.entities.Category
 import com.isep.shared.domain.entities.Listing
-import com.isep.shared.domain.entities.label
+import com.isep.composeapp.ui.i18n.text
 import com.isep.composeapp.ui.i18n.currentLanguageTag
 import com.isep.composeapp.ui.i18n.formatDate
 import com.isep.composeapp.ui.i18n.formatPrice
@@ -116,7 +116,7 @@ private fun CategoryFilter(
             FilterChip(
                 selected = selected == category,
                 onClick = { onSelected(category) },
-                label = { Text(category.label()) }
+                label = { Text(category.text()) }
             )
         }
     }
@@ -150,7 +150,7 @@ private fun ListingCard(listing: Listing) {
                 Text(listing.title, style = MaterialTheme.typography.titleMedium)
                 Text(formatPrice(listing.price, languageTag), style = MaterialTheme.typography.bodyMedium)
                 Text(formatDate(listing.creationDate, languageTag), style = MaterialTheme.typography.bodySmall)
-                Text(listing.category.label(), style = MaterialTheme.typography.labelMedium)
+                Text(listing.category.text(), style = MaterialTheme.typography.labelMedium)
             }
         }
     }

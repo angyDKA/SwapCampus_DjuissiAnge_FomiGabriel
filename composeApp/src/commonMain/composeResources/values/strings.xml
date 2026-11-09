@@ -10,8 +10,76 @@
     <string name="login_error_invalid_credentials">Wrong email or password.</string>
     <string name="login_logged_in_as">Logged in: %1$s</string>
 
-    <!-- Welcome screen (new, shared by Android and iOS) -->
+    <!-- Welcome screen (removed at step 7) -->
     <string name="welcome_title">Welcome, %1$s!</string>
     <string name="welcome_platform">Running on %1$s</string>
     <string name="welcome_logout">Log out</string>
+
+    <!-- Navigation -->
+    <string name="nav_listings">Listings</string>
+    <string name="nav_my_listings">My Listings</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Common actions -->
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_keep">Keep</string>
+    <string name="action_reserve">Reserve</string>
+    <string name="action_mark_sold">Mark as sold</string>
+    <string name="action_post_listing">Post a listing</string>
+    <string name="action_logout">Log out</string>
+
+    <!-- Listings -->
+    <string name="listings_search_label">Search by keyword</string>
+    <string name="listings_no_match">No listing matches your search.</string>
+    <string name="listing_posted_on">Posted on %1$s</string>
+
+    <!-- Categories -->
+    <string name="category_all">All</string>
+    <string name="category_books">Books</string>
+    <string name="category_courses">Courses</string>
+    <string name="category_electronics">Electronics</string>
+    <string name="category_sports_leisure">Sports &amp; leisure</string>
+    <string name="category_furniture">Furniture</string>
+    <string name="category_clothing">Clothing</string>
+    <string name="category_other">Other</string>
+
+    <!-- Statuses -->
+    <string name="status_available">Available</string>
+    <string name="status_reserved">Reserved by %1$s</string>
+    <string name="status_sold">Sold on %1$s</string>
+
+    <!-- Listing form -->
+    <string name="form_title_edit">Edit listing</string>
+    <string name="form_field_title">Title</string>
+    <string name="form_field_description">Description</string>
+    <string name="form_field_price">Price (€)</string>
+    <string name="form_field_category">Category</string>
+    <string name="form_field_photo_url">Photo URL (optional)</string>
+    <string name="form_not_found">This listing does not exist or you are not its owner.</string>
+    <string name="error_not_logged_in">You must be logged in.</string>
+    <string name="error_not_owner">Only the owner can edit this listing.</string>
+    <string name="error_price_not_number">The price must be a number.</string>
+    <string name="error_invalid_listing">Invalid listing.</string>
+
+    <!-- My listings -->
+    <string name="my_listings_login_required">Log in from the Profile tab to post and manage your listings.</string>
+    <string name="my_listings_empty">You have not posted any listing yet.</string>
+    <string name="remove_dialog_title">Remove this listing?</string>
+    <string name="remove_dialog_text">%1$s will be permanently removed.</string>
+    <string name="reserve_dialog_title">Reserve this listing</string>
+    <string name="reserve_buyer_name">Buyer name</string>
+
+    <!-- Profile -->
+    <string name="profile_not_logged_in">You are not logged in.</string>
+    <string name="profile_name">Name: %1$s</string>
+    <string name="profile_email">Email: %1$s</string>
+    <string name="profile_role">Role: %1$s</string>
+    <string name="profile_member_since">Member since %1$s</string>
+
+    <!-- Language (step 5) -->
+    <string name="language_title">Language</string>
+    <string name="language_ios_hint">Change the language in the iPhone Settings.</string>
 </resources>

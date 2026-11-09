@@ -32,7 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.isep.composeapp.ui.AppContainer
 import com.isep.shared.domain.entities.Category
 import com.isep.shared.domain.entities.Listing
-import com.isep.shared.domain.entities.label
+import com.isep.composeapp.ui.i18n.text
 import com.isep.shared.repository.AuthRepository
 import com.isep.shared.repository.ListingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -182,7 +182,7 @@ private fun ListingForm(
                 FilterChip(
                     selected = category == item,
                     onClick = { category = item },
-                    label = { Text(item.label()) }
+                    label = { Text(item.text()) }
                 )
             }
         }

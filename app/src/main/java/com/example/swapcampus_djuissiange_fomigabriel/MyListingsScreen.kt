@@ -33,7 +33,7 @@ import com.isep.shared.domain.entities.ListingStatus
 import com.isep.shared.domain.entities.Reserved
 import com.isep.shared.domain.entities.Sold
 import com.isep.shared.domain.entities.UserAccount
-import com.isep.shared.domain.entities.label
+import com.isep.composeapp.ui.i18n.text
 import com.isep.shared.repository.AuthRepository
 import com.isep.shared.repository.ListingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -192,8 +192,8 @@ private fun MyListingCard(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(listing.title, style = MaterialTheme.typography.titleMedium)
-            Text("${formatPrice(listing.price, currentLanguageTag())} - ${listing.category.label()}")
-            Text(listing.status.label(), style = MaterialTheme.typography.labelMedium)
+            Text("${formatPrice(listing.price, currentLanguageTag())} - ${listing.category.text()}")
+            Text(listing.status.text(), style = MaterialTheme.typography.labelMedium)
 
             // Exhaustive when on the sealed class, with no else.
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
