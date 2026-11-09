@@ -38,6 +38,9 @@ import com.isep.shared.domain.describePhoto
 import com.isep.shared.domain.entities.Category
 import com.isep.shared.domain.entities.Listing
 import com.isep.shared.domain.entities.label
+import com.isep.composeapp.ui.i18n.currentLanguageTag
+import com.isep.composeapp.ui.i18n.formatDate
+import com.isep.composeapp.ui.i18n.formatPrice
 
 /**
  * Listings screen (exercise 4): search field, category filter and list of cards.
@@ -121,6 +124,7 @@ private fun CategoryFilter(
 
 @Composable
 private fun ListingCard(listing: Listing) {
+    val languageTag = currentLanguageTag()
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -144,7 +148,8 @@ private fun ListingCard(listing: Listing) {
             Spacer(Modifier.width(12.dp))
             Column {
                 Text(listing.title, style = MaterialTheme.typography.titleMedium)
-                Text("${listing.price} €", style = MaterialTheme.typography.bodyMedium)
+                Text(formatPrice(listing.price, languageTag), style = MaterialTheme.typography.bodyMedium)
+                Text(formatDate(listing.creationDate, languageTag), style = MaterialTheme.typography.bodySmall)
                 Text(listing.category.label(), style = MaterialTheme.typography.labelMedium)
             }
         }

@@ -43,6 +43,8 @@ import kotlinx.datetime.LocalDate
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import com.isep.composeapp.ui.i18n.currentLanguageTag
+import com.isep.composeapp.ui.i18n.formatPrice
 
 /**
  * ViewModel of the "My Listings" screen: status changes (exercise 7)
@@ -190,7 +192,7 @@ private fun MyListingCard(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(listing.title, style = MaterialTheme.typography.titleMedium)
-            Text("${listing.price} € - ${listing.category.label()}")
+            Text("${formatPrice(listing.price, currentLanguageTag())} - ${listing.category.label()}")
             Text(listing.status.label(), style = MaterialTheme.typography.labelMedium)
 
             // Exhaustive when on the sealed class, with no else.
