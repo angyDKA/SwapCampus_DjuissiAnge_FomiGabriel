@@ -1,4 +1,4 @@
-package com.example.swapcampus_djuissiange_fomigabriel.ui.listings
+package com.isep.composeapp.ui.viewmodel
 
 import com.isep.shared.domain.entities.Listing
 

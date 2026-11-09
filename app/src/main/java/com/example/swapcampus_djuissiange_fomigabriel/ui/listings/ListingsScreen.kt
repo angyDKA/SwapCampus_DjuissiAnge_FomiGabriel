@@ -32,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.isep.composeapp.ui.viewmodel.ListingsUiState
+import com.isep.composeapp.ui.viewmodel.ListingsViewModel
 import com.isep.shared.domain.describePhoto
 import com.isep.shared.domain.entities.Category
 import com.isep.shared.domain.entities.Listing
