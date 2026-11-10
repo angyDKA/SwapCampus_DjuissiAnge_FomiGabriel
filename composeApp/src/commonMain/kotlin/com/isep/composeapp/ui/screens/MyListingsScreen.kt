@@ -1,4 +1,4 @@
-package com.example.swapcampus_djuissiange_fomigabriel
+package com.isep.composeapp.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,82 +23,42 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.isep.composeapp.ui.AppContainer
-import com.isep.shared.domain.entities.Available
-import com.isep.shared.domain.entities.Listing
-import com.isep.shared.domain.entities.ListingStatus
-import com.isep.shared.domain.entities.Reserved
-import com.isep.shared.domain.entities.Sold
-import com.isep.shared.domain.entities.UserAccount
-import com.isep.composeapp.ui.i18n.text
-import com.isep.shared.repository.AuthRepository
-import com.isep.shared.repository.ListingRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.datetime.LocalDate
-import kotlin.time.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import com.isep.composeapp.resources.Res
+import com.isep.composeapp.resources.action_cancel
+import com.isep.composeapp.resources.action_edit
+import com.isep.composeapp.resources.action_keep
+import com.isep.composeapp.resources.action_mark_sold
+import com.isep.composeapp.resources.action_post_listing
+import com.isep.composeapp.resources.action_remove
+import com.isep.composeapp.resources.action_reserve
+import com.isep.composeapp.resources.my_listings_empty
+import com.isep.composeapp.resources.my_listings_login_required
+import com.isep.composeapp.resources.nav_my_listings
+import com.isep.composeapp.resources.remove_dialog_text
+import com.isep.composeapp.resources.remove_dialog_title
+import com.isep.composeapp.resources.reserve_buyer_name
+import com.isep.composeapp.resources.reserve_dialog_title
 import com.isep.composeapp.ui.i18n.currentLanguageTag
 import com.isep.composeapp.ui.i18n.formatPrice
+import com.isep.composeapp.ui.i18n.text
+import com.isep.composeapp.ui.viewmodel.MyListingsViewModel
+import com.isep.shared.domain.entities.Available
+import com.isep.shared.domain.entities.Listing
+import com.isep.shared.domain.entities.Reserved
+import com.isep.shared.domain.entities.Sold
+import org.jetbrains.compose.resources.stringResource
 
 /**
- * ViewModel of the "My Listings" screen: status changes (exercise 7)
- * and removal (exercise 8), both reserved to the listing's owner.
+ * "My Listings" screen: the logged-in user's listings, with status changes,
+ * edit and removal (with confirmation). Common code: Android and iOS.
  */
-class MyListingsViewModel(
-    private val listingRepository: ListingRepository = AppContainer.listingRepository,
-    private val authRepository: AuthRepository = AppContainer.authRepository
-) : ViewModel() {
-
-    val currentUser: StateFlow<UserAccount?> = authRepository.currentUser
-
-    private val _myListings = MutableStateFlow<List<Listing>>(emptyList())
-    val myListings: StateFlow<List<Listing>> = _myListings.asStateFlow()
-
-    fun refresh() {
-        val user = authRepository.currentUser.value
-        _myListings.value =
-            if (user == null) emptyList()
-            else listingRepository.allListings().filter { it.author.id == user.id }
-    }
-
-    // Transitions from the specifications:
-    // Available -> Reserved(buyer), Reserved -> Sold(saleDate), Reserved/Sold -> Available
-    fun reserve(listing: Listing, buyer: String) = changeStatus(listing, Reserved(buyer.trim()))
-
-    fun markAsSold(listing: Listing) = changeStatus(listing, Sold(today()))
-
-    fun cancel(listing: Listing) = changeStatus(listing, Available)
-
-    fun remove(listing: Listing) {
-        if (!isOwner(listing)) return
-        listingRepository.removeListing(listing.id)
-        refresh()
-    }
-
-    private fun changeStatus(listing: Listing, newStatus: ListingStatus) {
-        if (!isOwner(listing)) return
-        listingRepository.changeStatus(listing.id, newStatus)
-        refresh()
-    }
-
-    private fun isOwner(listing: Listing): Boolean =
-        authRepository.currentUser.value?.id == listing.author.id
-}
-
-private fun today(): LocalDate =
-    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-
 @Composable
 fun MyListingsScreen(
     onPostClick: () -> Unit,
     onEditClick: (Int) -> Unit,
-    viewModel: MyListingsViewModel = viewModel()
+    viewModel: MyListingsViewModel = viewModel { MyListingsViewModel() }
 ) {
     val currentUser by viewModel.currentUser.collectAsStateWithLifecycle()
     val myListings by viewModel.myListings.collectAsStateWithLifecycle()
@@ -115,16 +75,16 @@ fun MyListingsScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("My Listings", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(Res.string.nav_my_listings), style = MaterialTheme.typography.headlineSmall)
 
         if (currentUser == null) {
-            Text("Log in from the Profile tab to post and manage your listings.")
+            Text(stringResource(Res.string.my_listings_login_required))
         } else {
             Button(onClick = onPostClick, modifier = Modifier.fillMaxWidth()) {
-                Text("Post a listing")
+                Text(stringResource(Res.string.action_post_listing))
             }
             if (myListings.isEmpty()) {
-                Text("You have not posted any listing yet.")
+                Text(stringResource(Res.string.my_listings_empty))
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(myListings, key = { it.id }) { listing ->
@@ -142,12 +102,12 @@ fun MyListingsScreen(
         }
     }
 
-    // Exercise 8: confirmation before the removal actually happens.
+
     listingToRemove?.let { listing ->
         AlertDialog(
             onDismissRequest = { listingToRemove = null },
-            title = { Text("Remove this listing?") },
-            text = { Text("${listing.title} will be permanently removed.") },
+            title = { Text(stringResource(Res.string.remove_dialog_title)) },
+            text = { Text(stringResource(Res.string.remove_dialog_text, listing.title)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -155,12 +115,12 @@ fun MyListingsScreen(
                         listingToRemove = null
                     }
                 ) {
-                    Text("Remove")
+                    Text(stringResource(Res.string.action_remove))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { listingToRemove = null }) {
-                    Text("Keep")
+                    Text(stringResource(Res.string.action_keep))
                 }
             }
         )
@@ -198,19 +158,21 @@ private fun MyListingCard(
             // Exhaustive when on the sealed class, with no else.
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 when (listing.status) {
-                    is Available -> TextButton(onClick = onReserve) { Text("Reserve") }
-
-                    is Reserved -> {
-                        TextButton(onClick = onMarkAsSold) { Text("Mark as sold") }
-                        TextButton(onClick = onCancel) { Text("Cancel") }
+                    is Available -> TextButton(onClick = onReserve) {
+                        Text(stringResource(Res.string.action_reserve))
                     }
 
-                    is Sold -> TextButton(onClick = onCancel) { Text("Cancel") }
+                    is Reserved -> {
+                        TextButton(onClick = onMarkAsSold) { Text(stringResource(Res.string.action_mark_sold)) }
+                        TextButton(onClick = onCancel) { Text(stringResource(Res.string.action_cancel)) }
+                    }
+
+                    is Sold -> TextButton(onClick = onCancel) { Text(stringResource(Res.string.action_cancel)) }
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextButton(onClick = onEdit) { Text("Edit") }
-                TextButton(onClick = onRemove) { Text("Remove") }
+                TextButton(onClick = onEdit) { Text(stringResource(Res.string.action_edit)) }
+                TextButton(onClick = onRemove) { Text(stringResource(Res.string.action_remove)) }
             }
         }
     }
@@ -225,12 +187,12 @@ private fun ReserveDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Reserve this listing") },
+        title = { Text(stringResource(Res.string.reserve_dialog_title)) },
         text = {
             OutlinedTextField(
                 value = buyer,
                 onValueChange = { buyer = it },
-                label = { Text("Buyer name") },
+                label = { Text(stringResource(Res.string.reserve_buyer_name)) },
                 singleLine = true
             )
         },
@@ -239,12 +201,12 @@ private fun ReserveDialog(
                 onClick = { onConfirm(buyer) },
                 enabled = buyer.isNotBlank()
             ) {
-                Text("Reserve")
+                Text(stringResource(Res.string.action_reserve))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(Res.string.action_cancel))
             }
         }
     )
