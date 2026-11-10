@@ -15,7 +15,7 @@ import com.isep.composeapp.resources.login_email
 import com.isep.composeapp.resources.login_logged_in_as
 import com.isep.composeapp.resources.login_password
 import com.isep.composeapp.resources.login_title
-import com.isep.composeapp.resources.welcome_logout
+import com.isep.composeapp.resources.action_logout
 import com.isep.composeapp.ui.AppContainer
 import com.isep.composeapp.ui.i18n.text
 import com.isep.composeapp.ui.viewmodel.LoginViewModel
@@ -62,7 +62,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit = {}) {
         user?.let {
             Spacer(Modifier.height(8.dp))
             Text(stringResource(Res.string.login_logged_in_as, it.name))
-            TextButton(onClick = { viewModel.logout() }) { Text(stringResource(Res.string.welcome_logout)) }
+            TextButton(onClick = { viewModel.logout() }) { Text(stringResource(Res.string.action_logout)) }
         }
         Spacer(Modifier.height(16.dp))
         Text(stringResource(Res.string.login_demo_accounts), style = MaterialTheme.typography.bodySmall)

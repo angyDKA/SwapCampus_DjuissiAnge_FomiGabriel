@@ -10,10 +10,6 @@
     <string name="login_error_invalid_credentials">E-mail ou mot de passe incorrect.</string>
     <string name="login_logged_in_as">Connecté : %1$s</string>
 
-    <!-- Welcome screen (removed at step 7) -->
-    <string name="welcome_title">Bienvenue, %1$s !</string>
-    <string name="welcome_platform">Exécuté sur %1$s</string>
-    <string name="welcome_logout">Se déconnecter</string>
 
     <!-- Navigation -->
     <string name="nav_listings">Annonces</string>
