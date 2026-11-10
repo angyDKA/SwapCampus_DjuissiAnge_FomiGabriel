@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.android.lint) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.compose.multiplatform) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }

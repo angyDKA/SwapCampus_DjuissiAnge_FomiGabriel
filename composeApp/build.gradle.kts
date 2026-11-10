@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.lint)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.compose.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -41,6 +42,8 @@ kotlin {
                 implementation(libs.jetbrains.lifecycle.viewmodel.compose)
                 implementation(libs.jetbrains.lifecycle.runtime.compose)
                 implementation(libs.compose.material.icons.core)
+                implementation(libs.jetbrains.navigation.compose)
+                implementation(libs.kotlinx.serialization.core)
             }
         }
 
