@@ -1,4 +1,4 @@
-package com.example.swapcampus_djuissiange_fomigabriel.ui.listings
+package com.isep.composeapp.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,24 +32,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.isep.composeapp.resources.Res
+import com.isep.composeapp.resources.category_all
+import com.isep.composeapp.resources.listing_posted_on
+import com.isep.composeapp.resources.listings_no_match
+import com.isep.composeapp.resources.listings_search_label
+import com.isep.composeapp.ui.i18n.currentLanguageTag
+import com.isep.composeapp.ui.i18n.formatDate
+import com.isep.composeapp.ui.i18n.formatPrice
+import com.isep.composeapp.ui.i18n.text
 import com.isep.composeapp.ui.viewmodel.ListingsUiState
 import com.isep.composeapp.ui.viewmodel.ListingsViewModel
 import com.isep.shared.domain.describePhoto
 import com.isep.shared.domain.entities.Category
 import com.isep.shared.domain.entities.Listing
-import com.isep.composeapp.ui.i18n.text
-import com.isep.composeapp.ui.i18n.currentLanguageTag
-import com.isep.composeapp.ui.i18n.formatDate
-import com.isep.composeapp.ui.i18n.formatPrice
+import org.jetbrains.compose.resources.stringResource
 
-/**
- * Listings screen (exercise 4): search field, category filter and list of cards.
- * Accessible without authentication.
- */
+
 @Composable
 fun ListingsScreen(
     modifier: Modifier = Modifier,
-    viewModel: ListingsViewModel = viewModel()
+    // A creation function instead of reflection: works on Android AND iOS.
+    viewModel: ListingsViewModel = viewModel { ListingsViewModel() }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val keyword by viewModel.keyword.collectAsStateWithLifecycle()
@@ -63,7 +67,7 @@ fun ListingsScreen(
         OutlinedTextField(
             value = keyword,
             onValueChange = viewModel::onKeywordChange,
-            label = { Text("Search by keyword") },
+            label = { Text(stringResource(Res.string.listings_search_label)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -71,7 +75,6 @@ fun ListingsScreen(
         CategoryFilter(selected = category, onSelected = viewModel::onCategoryChange)
         Spacer(Modifier.height(8.dp))
 
-        // The three UiState branches are handled explicitly, with no else.
         when (val state = uiState) {
             is ListingsUiState.Loading -> Box(
                 modifier = Modifier.fillMaxSize(),
@@ -87,7 +90,7 @@ fun ListingsScreen(
 
             is ListingsUiState.Success ->
                 if (state.listings.isEmpty()) {
-                    Text("No listing matches your search.")
+                    Text(stringResource(Res.string.listings_no_match))
                 } else {
                     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         items(state.listings, key = { it.id }) { listing ->
@@ -109,7 +112,7 @@ private fun CategoryFilter(
             FilterChip(
                 selected = selected == null,
                 onClick = { onSelected(null) },
-                label = { Text("All") }
+                label = { Text(stringResource(Res.string.category_all)) }
             )
         }
         items(Category.entries) { category ->
@@ -130,7 +133,7 @@ private fun ListingCard(listing: Listing) {
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Image placeholder (the photos are not downloaded yet).
+
             Box(
                 modifier = Modifier
                     .size(64.dp)
@@ -149,7 +152,10 @@ private fun ListingCard(listing: Listing) {
             Column {
                 Text(listing.title, style = MaterialTheme.typography.titleMedium)
                 Text(formatPrice(listing.price, languageTag), style = MaterialTheme.typography.bodyMedium)
-                Text(formatDate(listing.creationDate, languageTag), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    stringResource(Res.string.listing_posted_on, formatDate(listing.creationDate, languageTag)),
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Text(listing.category.text(), style = MaterialTheme.typography.labelMedium)
             }
         }
