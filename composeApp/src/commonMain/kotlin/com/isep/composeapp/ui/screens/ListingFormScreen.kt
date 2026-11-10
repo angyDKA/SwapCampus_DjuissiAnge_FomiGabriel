@@ -1,4 +1,4 @@
-package com.example.swapcampus_djuissiange_fomigabriel
+package com.isep.composeapp.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,96 +26,44 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.isep.composeapp.ui.AppContainer
+import com.isep.composeapp.resources.Res
+import com.isep.composeapp.resources.action_cancel
+import com.isep.composeapp.resources.action_post_listing
+import com.isep.composeapp.resources.action_save
+import com.isep.composeapp.resources.form_field_category
+import com.isep.composeapp.resources.form_field_description
+import com.isep.composeapp.resources.form_field_photo_url
+import com.isep.composeapp.resources.form_field_price
+import com.isep.composeapp.resources.form_field_title
+import com.isep.composeapp.resources.form_not_found
+import com.isep.composeapp.resources.form_title_edit
+import com.isep.composeapp.ui.i18n.text
+import com.isep.composeapp.ui.viewmodel.ListingFormViewModel
+import com.isep.composeapp.ui.viewmodel.UiMessage
+import com.isep.composeapp.ui.viewmodel.text
 import com.isep.shared.domain.entities.Category
 import com.isep.shared.domain.entities.Listing
-import com.isep.composeapp.ui.i18n.text
-import com.isep.shared.repository.AuthRepository
-import com.isep.shared.repository.ListingRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import org.jetbrains.compose.resources.stringResource
 
 /**
- * ViewModel shared by the Post (exercise 5) and Edit (exercise 6) forms.
- * The business rules are NOT checked here: the repository checks them
- * and this ViewModel only displays the message it receives.
- */
-class ListingFormViewModel(
-    private val listingRepository: ListingRepository = AppContainer.listingRepository,
-    private val authRepository: AuthRepository = AppContainer.authRepository
-) : ViewModel() {
-
-    private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
-
-    /** The listing to edit, or null if it does not exist or belongs to someone else. */
-    fun findOwnListing(id: Int): Listing? {
-        val user = authRepository.currentUser.value ?: return null
-        return listingRepository.allListings()
-            .firstOrNull { it.id == id && it.author.id == user.id }
-    }
-
-    /** Returns true when the listing was saved. */
-    fun save(
-        listingId: Int?,
-        title: String,
-        description: String,
-        priceText: String,
-        category: Category,
-        photoUrl: String
-    ): Boolean {
-        val user = authRepository.currentUser.value
-        if (user == null) {
-            _errorMessage.value = "You must be logged in."
-            return false
-        }
-        if (listingId != null && findOwnListing(listingId) == null) {
-            _errorMessage.value = "Only the owner can edit this listing."
-            return false
-        }
-        val price = priceText.replace(',', '.').toDoubleOrNull()
-        if (price == null) {
-            _errorMessage.value = "The price must be a number."
-            return false
-        }
-        val photo = photoUrl.trim().ifBlank { null }
-
-        return try {
-            if (listingId == null) {
-                listingRepository.postListing(title, description, price, category, user, photo)
-            } else {
-                listingRepository.updateListing(listingId, title, description, price, category, photo)
-            }
-            _errorMessage.value = null
-            true
-        } catch (e: IllegalArgumentException) {
-            // Message produced by the business rules in :shared.
-            _errorMessage.value = e.message ?: "Invalid listing."
-            false
-        }
-    }
-}
-
-/**
- * Form screen. listingId == null: Post a new listing.
- * Otherwise: Edit, pre-filled from the existing listing (owner only).
+ * Form screen. listingId == null: post a new listing.
+ * Otherwise: edit, pre-filled from the existing listing (owner only).
+ * Common code: Android and iOS.
  */
 @Composable
 fun ListingFormScreen(
     listingId: Int?,
     onDone: () -> Unit,
-    viewModel: ListingFormViewModel = viewModel()
+    viewModel: ListingFormViewModel = viewModel { ListingFormViewModel() }
 ) {
     val existing = remember(listingId) { listingId?.let { viewModel.findOwnListing(it) } }
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
 
     if (listingId != null && existing == null) {
         Text(
-            text = "This listing does not exist or you are not its owner.",
+            text = stringResource(Res.string.form_not_found),
             modifier = Modifier.padding(16.dp)
         )
     } else {
@@ -134,7 +82,7 @@ fun ListingFormScreen(
 @Composable
 private fun ListingForm(
     existing: Listing?,
-    errorMessage: String?,
+    errorMessage: UiMessage?,
     onSave: (String, String, String, Category, String) -> Unit,
     onCancel: () -> Unit
 ) {
@@ -152,31 +100,33 @@ private fun ListingForm(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = if (existing == null) "Post a listing" else "Edit listing",
+            text = stringResource(
+                if (existing == null) Res.string.action_post_listing else Res.string.form_title_edit
+            ),
             style = MaterialTheme.typography.headlineSmall
         )
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
-            label = { Text("Title") },
+            label = { Text(stringResource(Res.string.form_field_title)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = description,
             onValueChange = { description = it },
-            label = { Text("Description") },
+            label = { Text(stringResource(Res.string.form_field_description)) },
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
             value = priceText,
             onValueChange = { priceText = it },
-            label = { Text("Price (€)") },
+            label = { Text(stringResource(Res.string.form_field_price)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.fillMaxWidth()
         )
-        Text("Category", style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(Res.string.form_field_category), style = MaterialTheme.typography.labelLarge)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             items(Category.entries) { item ->
                 FilterChip(
@@ -189,19 +139,19 @@ private fun ListingForm(
         OutlinedTextField(
             value = photoUrl,
             onValueChange = { photoUrl = it },
-            label = { Text("Photo URL (optional)") },
+            label = { Text(stringResource(Res.string.form_field_photo_url)) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
         errorMessage?.let { message ->
-            Text(message, color = MaterialTheme.colorScheme.error)
+            Text(message.text(), color = MaterialTheme.colorScheme.error)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { onSave(title, description, priceText, category, photoUrl) }) {
-                Text("Save")
+                Text(stringResource(Res.string.action_save))
             }
             TextButton(onClick = onCancel) {
-                Text("Cancel")
+                Text(stringResource(Res.string.action_cancel))
             }
         }
     }
