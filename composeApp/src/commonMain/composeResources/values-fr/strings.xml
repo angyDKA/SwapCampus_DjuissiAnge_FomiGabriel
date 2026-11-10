@@ -82,4 +82,5 @@
     <!-- Language (step 5) -->
     <string name="language_title">Langue</string>
     <string name="language_ios_hint">Changez la langue dans les Réglages de l’iPhone.</string>
+    <string name="language_system">Langue du téléphone</string>
 </resources>

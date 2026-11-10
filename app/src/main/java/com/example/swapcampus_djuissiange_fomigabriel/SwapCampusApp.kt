@@ -1,5 +1,8 @@
 package com.example.swapcampus_djuissiange_fomigabriel
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -26,6 +29,7 @@ import androidx.navigation.navArgument
 import com.example.swapcampus_djuissiange_fomigabriel.ui.listings.ListingsScreen
 import com.isep.composeapp.ui.viewmodel.ListingsViewModel
 import com.isep.composeapp.ui.AppContainer
+import com.isep.composeapp.ui.screens.LanguageSelector
 import com.isep.composeapp.ui.screens.LoginScreen
 import com.isep.shared.domain.entities.UserAccount
 
@@ -105,7 +109,12 @@ fun SwapCampusApp() {
             }
 
             // Login / logout screen written for exercise 2.
-            composable(ROUTE_PROFILE) { LoginScreen() }
+            composable(ROUTE_PROFILE) {
+                Column(Modifier.fillMaxSize()) {
+                    Box(Modifier.weight(1f)) { LoginScreen() }
+                    LanguageSelector()
+                }
+            }
 
             // Routes protected by authentication.
             composable(ROUTE_POST) {
