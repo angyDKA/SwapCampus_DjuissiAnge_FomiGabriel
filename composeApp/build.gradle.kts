@@ -40,6 +40,7 @@ kotlin {
                 implementation(libs.compose.components.resources)
                 implementation(libs.jetbrains.lifecycle.viewmodel.compose)
                 implementation(libs.jetbrains.lifecycle.runtime.compose)
+                implementation(libs.compose.material.icons.core)
             }
         }
 
